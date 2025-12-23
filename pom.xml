@@ -66,11 +66,10 @@
 
   <dependencies>
       <dependency>
-          <groupId>org.spigotmc</groupId>
-          <artifactId>spigot</artifactId>
-          <version>1.16.5-R0.1-SNAPSHOT</version>
-          <scope>system</scope>
-          <systemPath>${project.basedir}/libs/spigot-1.16.5.jar</systemPath>
+         <groupId>org.spigotmc</groupId>
+         <artifactId>spigot</artifactId>
+         <version>1.16.5-R0.1-SNAPSHOT</version>
+         <scope>provided</scope>
       </dependency>
       <dependency>
           <groupId>com.comphenix.protocol</groupId>
