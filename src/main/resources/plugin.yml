@@ -1,0 +1,8 @@
+name: DontListMyServer
+version: '${project.version}'
+main: catgirllover.ru.dontlistmyserver.dontListMyServer
+api-version: '1.16'
+authors: [sempai]
+description: Dont List My Private Minecraft Server
+#softdepend: [ProtocolLib]
+depend: [ProtocolLib]

@@ -1,0 +1,11 @@
+enabled: true
+
+ABUSEIPDB_API_KEYS:
+  - "KEY_1"
+  - "KEY_2"
+  - "KEY_3"
+
+ABUSEIPDB_LIST_CHECK_CATEGORY: "14"
+BLOCK_USER_ACCESS: true
+BLOCK_CHUNK_LOAD_EVENT: true
+connection_info_ttl_seconds: 30
