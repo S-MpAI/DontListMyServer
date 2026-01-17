@@ -37,6 +37,7 @@ public final class dontListMyServer extends JavaPlugin {
 
         getConfig().addDefault("enabled", true);
         getConfig().addDefault("ABUSEIPDB_API_KEYS", new ArrayList<>());
+        getConfig().addDefault("WHITE_LIST_IPS", new ArrayList<>());
         getConfig().addDefault("ABUSEIPDB_MODE", "SINGLE_WITH_RETRY");
         getConfig().addDefault("ABUSEIPDB_LIST_CHECK_CATEGORY", "14");
         getConfig().addDefault("BLOCK_USER_ACCESS", true);
@@ -155,6 +156,7 @@ public final class dontListMyServer extends JavaPlugin {
 
         private final dontListMyServer plugin;
         private final List<String> KEYS;
+        private final List<String> WHITE_LIST_IPS;
         private final AbuseMode MODE;
         private final String CATEGORY;
         private final String COMMENT;
@@ -168,6 +170,7 @@ public final class dontListMyServer extends JavaPlugin {
         EventsWorkerModule(dontListMyServer p) {
             plugin = p;
             KEYS = p.getConfig().getStringList("ABUSEIPDB_API_KEYS");
+            WHITE_LIST_IPS = p.getConfig().getStringList("WHITE_LIST_IPS");
             CATEGORY = p.getConfig()
                     .getString("ABUSEIPDB_LIST_CHECK_CATEGORY", "14");
             COMMENT = p.getConfig()
@@ -186,25 +189,32 @@ public final class dontListMyServer extends JavaPlugin {
 
             plugin.getLogger().info("AbuseIPDB mode: " + MODE);
             plugin.getLogger().info("AbuseIPDB keys: " + KEYS.size());
+            plugin.getLogger().info("Whitelist IPs: " + WHITE_LIST_IPS);
         }
 
         @EventHandler(priority = EventPriority.HIGHEST)
         public void onLogin(AsyncPlayerPreLoginEvent e) {
+            String ip = e.getAddress().getHostAddress();
+            if (WHITE_LIST_IPS.contains(ip)) {
+                plugin.getLogger().info(ip+" is whitelisted. Login accepted.");
+                return;
+            }
             if (plugin.getConfig().getBoolean("BLOCK_USER_ACCESS", true))
-                e.disallow(
-                        AsyncPlayerPreLoginEvent.Result.KICK_OTHER,
-                        "Server closed");
+                e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Server closed");
         }
 
         @EventHandler(priority = EventPriority.HIGHEST)
         public void onPing(ServerListPingEvent e) {
             String ip = e.getAddress().getHostAddress();
+            if (WHITE_LIST_IPS.contains(ip)) {
+                plugin.getLogger().info(ip+" is whitelisted. Ping accepted.");
+                return;
+            }
             ConnectionInfo info = plugin.connectionInfoMap.get(ip);
             if (info == null) return;
 
             Long last = cooldown.get(ip);
-            if (last != null &&
-                    System.currentTimeMillis() - last < COOLDOWN_MS)
+            if (last != null && System.currentTimeMillis() - last < COOLDOWN_MS)
                 return;
 
             if (MODE == AbuseMode.SINGLE_WITH_RETRY)
@@ -260,7 +270,7 @@ public final class dontListMyServer extends JavaPlugin {
                             "AbuseIPDB OK (parallel) " + ip);
                 else
                     plugin.getLogger().warning(
-                            "AbuseIPDB PARALLEL FAILED " + ip);
+                            "AbuseIPDB PARALLEL FAILED " + ip +"..."+success.toString());
             });
         }
 
@@ -293,7 +303,7 @@ public final class dontListMyServer extends JavaPlugin {
                                     .replace("{port}",
                                             "" + info.port)
                                     .replace("{protocolVersion}",
-                                            "" + info.proto),
+                                            "" + info.proto)+ "\n\n Generated DontListMyServer by https://github.com/S-MpAI",
                             "UTF-8");
 
             try (OutputStream os = c.getOutputStream()) {
