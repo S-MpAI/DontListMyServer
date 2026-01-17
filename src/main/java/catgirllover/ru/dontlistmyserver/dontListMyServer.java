@@ -29,7 +29,7 @@ public final class dontListMyServer extends JavaPlugin {
     private long connectionTtlMs;
 
     public static final String DEFAULT_COMMENT =
-            "Suspicious Minecraft server scan. ip={ip}, port={port}, protocol={protocolVersion}";
+            "Suspicious Minecraft server scan. ip={ip}, port={port}, protocol={protocolVersion}\n\n Generated DontListMyServer by https://github.com/S-MpAI";
 
     @Override
     public void onEnable() {
